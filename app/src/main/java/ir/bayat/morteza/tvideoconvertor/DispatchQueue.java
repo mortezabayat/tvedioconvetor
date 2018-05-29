@@ -11,6 +11,7 @@ package ir.bayat.morteza.tvideoconvertor;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 
 import java.util.concurrent.CountDownLatch;
 
@@ -74,6 +75,7 @@ public class DispatchQueue extends Thread {
 
     public void handleMessage(Message inputMessage) {
 
+        Log.e("ENDDD" , "ENDING GDGHF" + inputMessage.toString());
     }
 
     @Override

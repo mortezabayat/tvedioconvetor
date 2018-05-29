@@ -60,7 +60,7 @@ public class Track {
     private Date creationTime = new Date();
     private int height;
     private int width;
-    private float volume = 0;
+    private float volume = 1;
     private long[] sampleDurations;
     private ArrayList<SamplePresentationTime> samplePresentationTimes = new ArrayList<>();
     private boolean isAudio = false;

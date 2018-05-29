@@ -33,7 +33,7 @@ import ir.bayat.morteza.tvideoconvertor.video.OutputSurface;
 
 public class MediaController {
 
-    private final static String MIME_TYPE = "video/avc";
+    final static String MIME_TYPE = "video/avc";
     private final static int PROCESSOR_TYPE_OTHER = 0;
     private final static int PROCESSOR_TYPE_QCOM = 1;
     private final static int PROCESSOR_TYPE_INTEL = 2;
@@ -82,7 +82,7 @@ public class MediaController {
         scheduleVideoConvert(videoObject, false);
     }
 
-    private boolean scheduleVideoConvert(VideoObject videoObject, boolean isEmpty) {
+    boolean scheduleVideoConvert(VideoObject videoObject, boolean isEmpty) {
         if (isEmpty && !videoConvertQueue.isEmpty()) {
             return false;
         } else if (isEmpty) {
@@ -129,7 +129,7 @@ public class MediaController {
     }
 
     @SuppressLint("NewApi")
-    private static MediaCodecInfo selectCodec(String mimeType) {
+    static MediaCodecInfo selectCodec(String mimeType) {
         int numCodecs = MediaCodecList.getCodecCount();
         MediaCodecInfo lastCodecInfo = null;
         for (int i = 0; i < numCodecs; i++) {
@@ -166,7 +166,7 @@ public class MediaController {
     }
 
     @SuppressLint("NewApi")
-    private static int selectColorFormat(MediaCodecInfo codecInfo, String mimeType) {
+    static int selectColorFormat(MediaCodecInfo codecInfo, String mimeType) {
         MediaCodecInfo.CodecCapabilities capabilities = codecInfo.getCapabilitiesForType(mimeType);
         int lastColorFormat = 0;
         for (int i = 0; i < capabilities.colorFormats.length; i++) {
@@ -213,6 +213,7 @@ public class MediaController {
                     }
                     videoConvertQueue.remove(videoObject);
                     startVideoConvertFromQueue();
+
                     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
                     String currentDateandTime = sdf.format(new Date());
                     Log.e("END TIME " ,  currentDateandTime);
@@ -226,7 +227,7 @@ public class MediaController {
 //                    NotificationCenter.getInstance().postNotificationName(NotificationCenter.FileNewChunkAvailable, videoObject, file.toString(), last ? file.length() : 0);
 //                }
             }
-        }, applicationHandler);
+        }, 0,applicationHandler);
     }
 
     private long readAndWriteTrack(final VideoObject videoObject, MediaExtractor extractor, MP4Builder mediaMuxer, MediaCodec.BufferInfo info, long start, long end, File file, boolean isAudio) throws Exception {
@@ -341,6 +342,7 @@ public class MediaController {
                         VideoConvertRunnable wrapper = new VideoConvertRunnable(obj);
                         Thread th = new Thread(wrapper, "VideoConvertRunnable");
                         th.start();
+//                        th.wait(5000);
                         th.join();
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -376,7 +378,12 @@ public class MediaController {
         int originalWidth = videoObject.videoEditedInfo.originalWidth;
         int originalHeight = videoObject.videoEditedInfo.originalHeight;
         int bitrate = videoObject.videoEditedInfo.bitrate;
+
         int rotateRender = 0;
+
+        FileLog.e("bitrate : " + bitrate);
+
+        FileLog.e(videoObject.videoEditedInfo.originalPath);
         File cacheFile = new File(videoObject.attachPath);
 
         if (Build.VERSION.SDK_INT < 18 && resultHeight > resultWidth && resultWidth != originalWidth && resultHeight != originalHeight) {
@@ -389,6 +396,7 @@ public class MediaController {
             if (rotationValue == 90) {
                 int temp = resultHeight;
                 resultHeight = resultWidth;
+
                 resultWidth = temp;
                 rotationValue = 0;
                 rotateRender = 270;
@@ -401,6 +409,8 @@ public class MediaController {
                 resultWidth = temp;
                 rotationValue = 0;
                 rotateRender = 90;
+
+
             }
         }
 
@@ -531,6 +541,7 @@ public class MediaController {
                             outputFormat.setInteger(MediaFormat.KEY_BIT_RATE, bitrate > 0 ? bitrate : 921600);
                             outputFormat.setInteger(MediaFormat.KEY_FRAME_RATE, 25);
                             outputFormat.setInteger(MediaFormat.KEY_I_FRAME_INTERVAL, 10);
+                            //outputFormat.setFeatureEnabled(MediaFormat.MIMETYPE_AUDIO_VORBIS,true);//todo morteza
                             if (Build.VERSION.SDK_INT < 18) {
                                 outputFormat.setInteger("stride", resultWidth + 32);
                                 outputFormat.setInteger("slice-height", resultHeight);
@@ -616,7 +627,7 @@ public class MediaController {
                                     } else if (encoderStatus == MediaCodec.INFO_OUTPUT_FORMAT_CHANGED) {
                                         MediaFormat newFormat = encoder.getOutputFormat();
                                         if (videoTrackIndex == -5) {
-                                            videoTrackIndex = mediaMuxer.addTrack(newFormat, false);
+                                            videoTrackIndex = mediaMuxer.addTrack(newFormat, false);//todo confige adiou
                                         }
                                     } else if (encoderStatus < 0) {
                                         throw new RuntimeException("unexpected result from encoder.dequeueOutputBuffer: " + encoderStatus);

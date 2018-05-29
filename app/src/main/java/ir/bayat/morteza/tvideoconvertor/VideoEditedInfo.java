@@ -10,7 +10,7 @@ package ir.bayat.morteza.tvideoconvertor;
 
 import java.util.Locale;
 
-public class VideoEditedInfo {
+public class  VideoEditedInfo {
     public long startTime;
     public long endTime;
     public int rotationValue;

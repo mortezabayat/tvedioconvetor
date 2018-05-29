@@ -8,9 +8,6 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "../include/libyuv/row.h"
-#include "../include/libyuv/scale_row.h"
-
 #ifdef __cplusplus
 namespace libyuv {
 extern "C" {

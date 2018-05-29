@@ -82,6 +82,9 @@ public class FileLog {
     }
 
     public static void e(final String message, final Throwable exception) {
+
+        Log.e( "Path : " , message );
+        exception.printStackTrace();
 //        if (!BuildVars.DEBUG_VERSION) {
 //            return;
 //        }
@@ -103,6 +106,7 @@ public class FileLog {
     }
 
     public static void e(final String message) {
+        Log.e( "Path : " , message );
 //        if (!BuildVars.DEBUG_VERSION) {
 //            return;
 //        }
@@ -123,6 +127,8 @@ public class FileLog {
     }
 
     public static void e(final Throwable e) {
+
+        e.printStackTrace();
 //        if (!BuildVars.DEBUG_VERSION) {
 //            return;
 //        }
@@ -152,7 +158,7 @@ public class FileLog {
 //        if (!BuildVars.DEBUG_VERSION) {
 //            return;
 //        }
-        Log.d("tmessages", message);
+        Log.d("Path", message);
 //        if (getInstance().streamWriter != null) {
 //            getInstance().logQueue.postRunnable(new Runnable() {
 //                @Override
@@ -172,7 +178,7 @@ public class FileLog {
 //        if (!BuildVars.DEBUG_VERSION) {
 //            return;
 //        }
-        Log.w("tmessages", message);
+        Log.w("Paht", message);
 //        if (getInstance().streamWriter != null) {
 //            getInstance().logQueue.postRunnable(new Runnable() {
 //                @Override

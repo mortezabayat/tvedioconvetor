@@ -1,5 +1,4 @@
 #include <jni.h>
-#include <memory.h>
 #include "sqlite/sqlite3.h"
 
 void throw_sqlite3_exception(JNIEnv *env, sqlite3 *handle, int errcode) {

@@ -8,8 +8,6 @@
  *  be found in the AUTHORS file in the root of the source tree.
  */
 
-#include "../include/libyuv/row.h"
-
 #if !defined(LIBYUV_DISABLE_X86) && defined(_M_X64) && \
     defined(_MSC_VER) && !defined(__clang__)
 #include <emmintrin.h>

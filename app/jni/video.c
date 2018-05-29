@@ -1,5 +1,6 @@
 #include <jni.h>
 #include <libyuv/include/libyuv.h>
+#include "utils.h"
 
 enum COLOR_FORMATTYPE {
     COLOR_FormatMonochrome              = 1,
@@ -65,7 +66,7 @@ int isSemiPlanarYUV(int colorFormat) {
     }
 }
 
-extern "C" JNIEXPORT
+ JNIEXPORT
 int Java_ir_bayat_morteza_tvideoconvertor_Utilities_convertVideoFrame(JNIEnv *env, jclass class, jobject src, jobject dest, int destFormat, int width, int height, int padding, int swap) {
     if (!src || !dest || !destFormat) {
         return 0;
