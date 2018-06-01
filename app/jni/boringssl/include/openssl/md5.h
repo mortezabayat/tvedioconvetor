@@ -58,6 +58,7 @@
 #define OPENSSL_HEADER_MD5_H
 
 #include <openssl/base.h>
+#include "base.h"
 
 #if defined(__cplusplus)
 extern "C" {

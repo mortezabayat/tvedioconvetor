@@ -59,6 +59,8 @@
 #include <string.h>
 
 #include <openssl/mem.h>
+#include <boringssl/include/openssl/base.h>
+#include <boringssl/include/openssl/md5.h>
 
 
 uint8_t *MD5(const uint8_t *data, size_t len, uint8_t *out) {
