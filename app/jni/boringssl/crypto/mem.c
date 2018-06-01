@@ -58,7 +58,6 @@
 #define _POSIX_C_SOURCE 201410L  /* needed for strdup, snprintf, vprintf etc */
 #endif
 
-#include <openssl/mem.h>
 
 #include <assert.h>
 #include <stdarg.h>
@@ -71,6 +70,8 @@
 #pragma warning(pop)
 #else
 #include <strings.h>
+#include <boringssl/include/openssl/mem.h>
+
 #endif
 
 
