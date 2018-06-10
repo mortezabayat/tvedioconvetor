@@ -12,6 +12,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import kotlinx.android.synthetic.main.fragment_main.*
+import java.io.File
 
 class MainActivityFragment : Fragment() {
 
@@ -31,12 +32,21 @@ class MainActivityFragment : Fragment() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
 
         if (requestCode != this.requestCode || resultCode != Activity.RESULT_OK
-                || data == null) return
+                || intent?.data == null) return
 
-        val path = data.data.path
+        val path = intent.data.path
+        onVideoSelected(path)
+    }
+
+    private fun onVideoSelected(path: String) {
+
+        val file = File(path)
+        if (!file.exists()) return
+
+
     }
 
 
