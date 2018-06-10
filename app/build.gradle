@@ -1,4 +1,4 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'//library  application
 
 repositories {
     mavenCentral()
@@ -26,7 +26,7 @@ android {
     buildToolsVersion '26.0.2'
 
     //useLibrary 'org.apache.http.legacy'
-    defaultConfig.applicationId = "ir.bayat.morteza.tvideoconvertor"
+    //defaultConfig.applicationId = "ir.bayat.morteza.tvideoconvertor"
 
     sourceSets.main.jniLibs.srcDirs = ['./jni/']
 
@@ -69,7 +69,7 @@ android {
             debuggable true
             jniDebuggable true
             signingConfig signingConfigs.debug
-            applicationIdSuffix ".beta"
+//            applicationIdSuffix ".beta"
         }
 
         release {
@@ -154,17 +154,17 @@ android {
         }
     }
 
-    applicationVariants.all { variant ->
-        variant.outputs.all { output ->
-            output.processManifest.doLast {
-                def abiVersion = variant.productFlavors.get(0).versionCode
-                String manifestPath = "$manifestOutputDirectory/AndroidManifest.xml"
-                def manifestContent = file(manifestPath).getText()
-                manifestContent = manifestContent.replace(String.format('android:versionCode="%d"', abiVersion), String.format('android:versionCode="%s"', defaultConfig.versionCode * 10 + abiVersion))
-                file(manifestPath).write(manifestContent)
-            }
-        }
-    }
+//    applicationVariants.all { variant ->
+//        variant.outputs.all { output ->
+//            output.processManifest.doLast {
+//                def abiVersion = variant.productFlavors.get(0).versionCode
+//                String manifestPath = "$manifestOutputDirectory/AndroidManifest.xml"
+//                def manifestContent = file(manifestPath).getText()
+//                manifestContent = manifestContent.replace(String.format('android:versionCode="%d"', abiVersion), String.format('android:versionCode="%s"', defaultConfig.versionCode * 10 + abiVersion))
+//                file(manifestPath).write(manifestContent)
+//            }
+//        }
+//    }
 
     defaultConfig {
         minSdkVersion 16
