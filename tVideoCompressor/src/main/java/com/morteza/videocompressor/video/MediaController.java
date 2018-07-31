@@ -9,10 +9,7 @@ import android.media.MediaExtractor;
 import android.media.MediaFormat;
 import android.media.MediaMetadataRetriever;
 import android.os.Build;
-import android.os.Environment;
 import android.util.Log;
-
-import com.morteza.videocompressor.Config;
 
 import java.io.File;
 import java.io.FileDescriptor;
@@ -20,14 +17,11 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
 
 @SuppressLint("NewApi")
 public class MediaController {
 
-    public final static String MIME_TYPE = "video/avc";
+    private final static String MIME_TYPE = "video/avc";
     private final static int PROCESSOR_TYPE_OTHER = 0;
     private final static int PROCESSOR_TYPE_QCOM = 1;
     private final static int PROCESSOR_TYPE_INTEL = 2;
@@ -51,7 +45,7 @@ public class MediaController {
     }
 
     @SuppressLint("NewApi")
-    public static int selectColorFormat(MediaCodecInfo codecInfo, String mimeType) {
+    private static int selectColorFormat(MediaCodecInfo codecInfo, String mimeType) {
         MediaCodecInfo.CodecCapabilities capabilities = codecInfo.getCapabilitiesForType(mimeType);
         int lastColorFormat = 0;
         for (int i = 0; i < capabilities.colorFormats.length; i++) {
@@ -80,7 +74,7 @@ public class MediaController {
     }
 
 
-    public native static int convertVideoFrame(ByteBuffer src, ByteBuffer dest, int destFormat, int width, int height, int padding, int swap);
+//    private native static int convertVideoFrame(ByteBuffer src, ByteBuffer dest, int destFormat, int width, int height, int padding, int swap);
 
     private void didWriteData(final boolean last, final boolean error) {
         final boolean firstWrite = videoConvertFirstWrite;
@@ -89,37 +83,37 @@ public class MediaController {
         }
     }
 
-    public static class VideoConvertRunnable implements Runnable {
+//    private static class VideoConvertRunnable implements Runnable {
+//
+//        private String videoPath;
+//
+//        private VideoConvertRunnable(String videoPath) {
+//            this.videoPath = videoPath;
+//        }
+//
+//        static void runConversion(final String videoPath) {
+//            new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    try {
+//                        VideoConvertRunnable wrapper = new VideoConvertRunnable(videoPath);
+//                        Thread th = new Thread(wrapper, "VideoConvertRunnable");
+//                        th.start();
+//                        th.join();
+//                    } catch (Exception e) {
+//                        Log.e("tvideocompressor", e.getMessage());
+//                    }
+//                }
+//            }).start();
+//        }
+//
+//        @Override
+//        public void run() {
+//            MediaController.getInstance().convertVideo(videoPath);
+//        }
+//    }
 
-        private String videoPath;
-
-        private VideoConvertRunnable(String videoPath) {
-            this.videoPath = videoPath;
-        }
-
-        public static void runConversion(final String videoPath) {
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        VideoConvertRunnable wrapper = new VideoConvertRunnable(videoPath);
-                        Thread th = new Thread(wrapper, "VideoConvertRunnable");
-                        th.start();
-                        th.join();
-                    } catch (Exception e) {
-                        Log.e("tvideocompressor", e.getMessage());
-                    }
-                }
-            }).start();
-        }
-
-        @Override
-        public void run() {
-            MediaController.getInstance().convertVideo(videoPath);
-        }
-    }
-
-    public static MediaCodecInfo selectCodec(String mimeType) {
+    private static MediaCodecInfo selectCodec(String mimeType) {
         int numCodecs = MediaCodecList.getCodecCount();
         MediaCodecInfo lastCodecInfo = null;
         for (int i = 0; i < numCodecs; i++) {
@@ -142,13 +136,13 @@ public class MediaController {
         return lastCodecInfo;
     }
 
-    public void scheduleVideoConvert(String path) {
-        startVideoConvertFromQueue(path);
-    }
-
-    private void startVideoConvertFromQueue(String path) {
-        VideoConvertRunnable.runConversion(path);
-    }
+//    public void scheduleVideoConvert(String path) {
+//        startVideoConvertFromQueue(path);
+//    }
+//
+//    private void startVideoConvertFromQueue(String path) {
+//        VideoConvertRunnable.runConversion(path);
+//    }
 
     @TargetApi(16)
     private long readAndWriteTrack(MediaExtractor extractor, MP4Builder mediaMuxer, MediaCodec.BufferInfo info, long start, long end, File file, boolean isAudio) throws Exception {
@@ -226,29 +220,17 @@ public class MediaController {
         return -5;
     }
 
-    private void updateWidthHeightBitrateForCompression(int originalWidth, int originalHeight , int originalBitrate) {
 
-        int compressionsCount = 0;
+    private void updateWidthHeightBitrateForCompression(int selectedCompression, int originalWidth, int originalHeight, int originalBitrate) {
 
-        if (originalWidth > 1280 || originalHeight > 1280) {
-            compressionsCount = 5;
-        } else if (originalWidth > 848 || originalHeight > 848) {
-            compressionsCount = 4;
-        } else if (originalWidth > 640 || originalHeight > 640) {
-            compressionsCount = 3;
-        } else if (originalWidth > 480 || originalHeight > 480) {
-            compressionsCount = 2;
-        } else {
-            compressionsCount = 1;
-        }
+        int compressionsCount = getCompressionsCount(originalWidth, originalHeight);
 //        if (compressionsCount <= 0) {
 //            return;
 //        }
         if (selectedCompression >= compressionsCount) {
             selectedCompression = compressionsCount - 1;
         }
-        if (selectedCompression != compressionsCount - 1)
-        {
+        if (selectedCompression != compressionsCount - 1) {
             float maxSize;
             int targetBitrate;
             switch (selectedCompression) {
@@ -279,16 +261,14 @@ public class MediaController {
                 //videoFramesSize = (long) (bitrate / 8 * videoDuration / 1000);
             }
 
-        }else {
+        } else {
             resultWidth = originalWidth;
             resultHeight = originalHeight;
             bitrate = originalBitrate;
         }
     }
 
-
-
-    public static int selectedCompression = 0;
+    private int selectedCompression = 0;
     int resultWidth = 640;
     int resultHeight = 360;
     int bitrate = 450000;
@@ -297,13 +277,14 @@ public class MediaController {
     int originalHeight;
     int originalBitrate;
 
-    public void preccossVideo(final String path){
+
+    private void processVideo(final String path, int selectedCompression) {
         MediaMetadataRetriever retriever = new MediaMetadataRetriever();
         try (FileInputStream is = new FileInputStream(path)) {
             FileDescriptor fd = is.getFD();
             retriever.setDataSource(fd);
         } catch (FileNotFoundException fileEx) {
-           fileEx.printStackTrace();
+            fileEx.printStackTrace();
             throw new IllegalArgumentException();
         } catch (IOException ioEx) {
             throw new IllegalArgumentException();
@@ -315,34 +296,37 @@ public class MediaController {
         String rotation = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION);
         String s_bitrate = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_BITRATE);
 
-         rotationValue = Integer.valueOf(rotation);
-         originalWidth = Integer.valueOf(width);
-         originalHeight = Integer.valueOf(height);
-         originalBitrate = Integer.valueOf(s_bitrate);
+        rotationValue = Integer.valueOf(rotation);
+        originalWidth = Integer.valueOf(width);
+        originalHeight = Integer.valueOf(height);
+        originalBitrate = Integer.valueOf(s_bitrate);
 
-        updateWidthHeightBitrateForCompression(originalWidth,originalHeight ,originalBitrate);
+        updateWidthHeightBitrateForCompression(selectedCompression, originalWidth, originalHeight, originalBitrate);
 
         retriever.release();
     }
 
+    @SuppressWarnings("SuspiciousNameCombination")
     @TargetApi(16)
-    public boolean convertVideo(final String path) {
+    public boolean convertVideo(final VideoInfo videoInfo) {
 
+        processVideo(videoInfo.srcPath, videoInfo.selectedCompression);
 
         long startTime = -1;
         long endTime = -1;
 
 
-
         int rotateRender = 0;
 
-        File cacheFile = new File(
-                Environment.getExternalStorageDirectory()
-                        + File.separator
-                        + Config.VIDEO_COMPRESSOR_APPLICATION_DIR_NAME
-                        + Config.VIDEO_COMPRESSOR_COMPRESSED_VIDEOS_DIR,
-                "VIDEO_" + new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date()) + ".mp4"
-        );
+        File cacheFile = new File(videoInfo.destPath);
+        if (cacheFile.exists() && !cacheFile.delete()) return false;
+//        File cacheFile = new File(
+//                Environment.getExternalStorageDirectory()
+//                        + File.separator
+//                        + Config.VIDEO_COMPRESSOR_APPLICATION_DIR_NAME
+//                        + Config.VIDEO_COMPRESSOR_COMPRESSED_VIDEOS_DIR,
+//                "VIDEO_" + new SimpleDateFormat("yyyyMMdd_HHmmss", Locale.US).format(new Date()) + ".mp4"
+//        );
 
         if (Build.VERSION.SDK_INT < 18 && resultHeight > resultWidth && resultWidth != originalWidth && resultHeight != originalHeight) {
             int temp = resultHeight;
@@ -370,7 +354,7 @@ public class MediaController {
         }
 
 
-        File inputFile = new File(path);
+        File inputFile = new File(videoInfo.srcPath);
         if (!inputFile.canRead()) {
             didWriteData(true, true);
             return false;
@@ -383,8 +367,7 @@ public class MediaController {
         long time = System.currentTimeMillis();
 
         //if (resultWidth != originalWidth || resultHeight != originalHeight || rotateRender != 0 )
-        if (resultWidth != 0 && resultHeight != 0)
-        {
+        if (resultWidth != 0 && resultHeight != 0) {
             MP4Builder mediaMuxer = null;
             MediaExtractor extractor = null;
 
@@ -681,7 +664,7 @@ public class MediaController {
                                                             ByteBuffer rgbBuf = outputSurface.getFrame();
                                                             ByteBuffer yuvBuf = encoderInputBuffers[inputBufIndex];
                                                             yuvBuf.clear();
-                                                            convertVideoFrame(rgbBuf, yuvBuf, colorFormat, resultWidth, resultHeight, padding, swapUV);
+//                                                            convertVideoFrame(rgbBuf, yuvBuf, colorFormat, resultWidth, resultHeight, padding, swapUV);
                                                             encoder.queueInputBuffer(inputBufIndex, 0, bufferSize, info.presentationTimeUs, 0);
                                                         } else {
                                                             Log.e("tvideocompressor", "input buffer not available");
@@ -736,7 +719,7 @@ public class MediaController {
                         videoStartTime = videoTime;
                     }
                 }
-                if (!error) {
+                if (!error && !videoInfo.mute) {
                     readAndWriteTrack(extractor, mediaMuxer, info, videoStartTime, endTime, cacheFile, true);
                 }
             } catch (Exception e) {
@@ -761,7 +744,40 @@ public class MediaController {
         }
         didWriteData(true, error);
 
-       // inputFile.delete();
+        // inputFile.delete();
         return true;
     }
+
+    public static int getCompressionsCount(int originalWidth, int originalHeight) {
+        int compressionsCount;
+
+        if (originalWidth > 1280 || originalHeight > 1280) {
+            compressionsCount = 5;
+        } else if (originalWidth > 848 || originalHeight > 848) {
+            compressionsCount = 4;
+        } else if (originalWidth > 640 || originalHeight > 640) {
+            compressionsCount = 3;
+        } else if (originalWidth > 480 || originalHeight > 480) {
+            compressionsCount = 2;
+        } else {
+            compressionsCount = 1;
+        }
+        return compressionsCount;
+    }
+
+    public static class VideoInfo {
+
+        private final String srcPath;
+        private final String destPath;
+        private final boolean mute;
+        private final int selectedCompression;
+
+        public VideoInfo(String srcPath, String destPath, int selectedCompression, boolean mute) {
+            this.srcPath = srcPath;
+            this.destPath = destPath;
+            this.selectedCompression = selectedCompression;
+            this.mute = mute;
+        }
+    }
+
 }

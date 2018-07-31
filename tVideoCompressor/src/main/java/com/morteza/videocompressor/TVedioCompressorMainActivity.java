@@ -21,14 +21,11 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.morteza.videocompressor.video.MediaController;
-
 import java.io.File;
-import java.io.FileDescriptor;
 import java.net.URISyntaxException;
 
 
-abstract public class TVedioCompressorMainActivity extends Activity {
+public class TVedioCompressorMainActivity extends Activity {
 
     private static final int RESULT_CODE_COMPRESS_VIDEO = 3;
     private static final String TAG = "T_V_C_MainActivity";
@@ -38,16 +35,13 @@ abstract public class TVedioCompressorMainActivity extends Activity {
     private TextView textView;
     private Context mContext;
 
-    public void selectCompressionLivel(int val){
-        MediaController.selectedCompression = val;
-    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
-        editText = (EditText) findViewById(R.id.editText);
-        textView = (TextView) findViewById(R.id.textView);
+        progressBar = findViewById(R.id.progressBar);
+        editText = findViewById(R.id.editText);
+        textView = findViewById(R.id.textView);
 
         mContext = this;
         findViewById(R.id.btnSelectVideo).setOnClickListener(new View.OnClickListener() {
@@ -98,12 +92,12 @@ abstract public class TVedioCompressorMainActivity extends Activity {
                             Log.e(TAG, "path: " + tempFile.getPath());
                                     //FileUtils.saveTempFile(displayName, this, uri);
 
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    MediaController.getInstance(). preccossVideo(tempFile.getAbsolutePath());
-                                }
-                            }).start();
+//                            new Thread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    MediaController.getInstance().processVideo(tempFile.getAbsolutePath());
+//                                }
+//                            }).start();
 
                             editText.setText(tempFile.getPath());
 
@@ -119,8 +113,9 @@ abstract public class TVedioCompressorMainActivity extends Activity {
             }
         }
     }
+
     @SuppressLint("NewApi")
-    public static String getFilePath(Context context, Uri uri) throws URISyntaxException {
+    public static String getFilePath(Context context, Uri uri) {
         String selection = null;
         String[] selectionArgs = null;
         // Uri is different in versions after KITKAT (Android 4.4), we need to
@@ -216,7 +211,9 @@ abstract public class TVedioCompressorMainActivity extends Activity {
 
         @Override
         protected Boolean doInBackground(Void... voids) {
-            return MediaController.getInstance().convertVideo(tempFile.getAbsolutePath());
+//            MediaController.VideoInfo videoInfo = new MediaController.VideoInfo(tempFile, , , true);
+//            return MediaController.getInstance().convertVideo(tempFile);
+            return false;
         }
 
         @Override
