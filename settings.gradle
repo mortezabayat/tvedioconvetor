@@ -1,1 +1,1 @@
-include ':tVideoCompressor'
+include ':tVideoCompressor', ':example'
