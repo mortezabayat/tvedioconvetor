@@ -6,7 +6,7 @@
  * Copyright Nikolai Kudashov, 2013-2014.
  */
 
-package com.morteza.videocompressor.video;
+package com.morteza.videocompressor;
 
 public class Sample {
     private long offset = 0;

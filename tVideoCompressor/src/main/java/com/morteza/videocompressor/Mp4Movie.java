@@ -6,7 +6,7 @@
  * Copyright Nikolai Kudashov, 2013-2014.
  */
 
-package com.morteza.videocompressor.video;
+package com.morteza.videocompressor;
 
 import android.annotation.TargetApi;
 import android.media.MediaCodec;
@@ -66,7 +66,7 @@ public class Mp4Movie {
         return cacheFile;
     }
 
-    public void addSample(int trackIndex, long offset, MediaCodec.BufferInfo bufferInfo) throws Exception {
+    public void addSample(int trackIndex, long offset, MediaCodec.BufferInfo bufferInfo) {
         if (trackIndex < 0 || trackIndex >= tracks.size()) {
             return;
         }

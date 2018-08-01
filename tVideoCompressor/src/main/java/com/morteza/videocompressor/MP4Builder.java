@@ -6,7 +6,7 @@
  * Copyright Nikolai Kudashov, 2013-2014.
  */
 
-package com.morteza.videocompressor.video;
+package com.morteza.videocompressor;
 
 import android.annotation.TargetApi;
 import android.media.MediaCodec;
@@ -206,7 +206,7 @@ public class MP4Builder {
         }
 
         @Override
-        public void parse(DataSource dataSource, ByteBuffer header, long contentSize, BoxParser boxParser) throws IOException {
+        public void parse(DataSource dataSource, ByteBuffer header, long contentSize, BoxParser boxParser) {
 
         }
 

@@ -6,7 +6,7 @@
  * Copyright Nikolai Kudashov, 2013-2014.
  */
 
-package com.morteza.videocompressor.video;
+package com.morteza.videocompressor;
 
 import android.annotation.TargetApi;
 import android.media.MediaCodec;
@@ -67,7 +67,7 @@ public class Track {
         samplingFrequencyIndexMap.put(8000, 0xb);
     }
 
-    public Track(int id, MediaFormat format, boolean isAudio) throws Exception {
+    public Track(int id, MediaFormat format, boolean isAudio) {
         trackId = id;
         if (!isAudio) {
             sampleDurations.add((long)3015);

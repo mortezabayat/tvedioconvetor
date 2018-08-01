@@ -1,4 +1,4 @@
-package com.morteza.videocompressor.video;
+package com.morteza.videocompressor;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -309,7 +309,7 @@ public class MediaController {
     @TargetApi(16)
     public boolean convertVideo(final VideoInfo videoInfo) {
 
-        processVideo(videoInfo.srcPath, videoInfo.selectedCompression);
+        processVideo(videoInfo.sourcePath, videoInfo.selectedCompression);
 
         long startTime = -1;
         long endTime = -1;
@@ -353,7 +353,7 @@ public class MediaController {
         }
 
 
-        File inputFile = new File(videoInfo.srcPath);
+        File inputFile = new File(videoInfo.sourcePath);
         if (!inputFile.canRead()) {
             didWriteData(true, true);
             return false;
@@ -763,20 +763,4 @@ public class MediaController {
         }
         return compressionsCount;
     }
-
-    public static class VideoInfo {
-
-        private final String srcPath;
-        private final String destPath;
-        private final boolean mute;
-        private final int selectedCompression;
-
-        public VideoInfo(String srcPath, String destPath, int selectedCompression, boolean mute) {
-            this.srcPath = srcPath;
-            this.destPath = destPath;
-            this.selectedCompression = selectedCompression;
-            this.mute = mute;
-        }
-    }
-
 }

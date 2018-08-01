@@ -22,7 +22,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.morteza.videocompressor.Config
-import com.morteza.videocompressor.video.MediaController
+import com.morteza.videocompressor.MediaController
+import com.morteza.videocompressor.VideoInfo
 import kotlinx.android.synthetic.main.fragment_main.*
 import java.io.File
 import java.io.FileInputStream
@@ -179,7 +180,7 @@ class MainActivityFragment : Fragment() {
                             + Config.VIDEO_COMPRESSOR_COMPRESSED_VIDEOS_DIR + File.separator
                             + random.nextInt(10000) + ".mp4")
 
-            val videoInfo = MediaController.VideoInfo(tempFile.path, destFile.path, selectedCompression, mute)
+            val videoInfo = VideoInfo(tempFile.path, destFile.path, selectedCompression, mute)
             return MediaController.getInstance().convertVideo(videoInfo)
         }
 

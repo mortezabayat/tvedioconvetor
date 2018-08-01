@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.morteza.videocompressor.video;
+package com.morteza.videocompressor;
 
 import android.annotation.TargetApi;
 import android.graphics.SurfaceTexture;
