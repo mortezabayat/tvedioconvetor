@@ -65,9 +65,7 @@ int isSemiPlanarYUV(int colorFormat) {
             return 0;
     }
 }
-//com_example_khalsa_video_MediaController_convertVideoFrame
-//com.morteza.videocompressor.video
-//com_morteza_videocompressor_video_MediaController_convertVideoFrame
+
 JNIEXPORT int com_morteza_video_MediaController_convertVideoFrame(JNIEnv *env, jclass class, jobject src, jobject dest, int destFormat, int width, int height, int padding, int swap) {
     if (!src || !dest || !destFormat) {
         return 0;
