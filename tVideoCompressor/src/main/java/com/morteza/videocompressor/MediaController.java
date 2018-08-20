@@ -224,9 +224,9 @@ public class MediaController {
     private void updateWidthHeightBitrateForCompression(int selectedCompression, int originalWidth, int originalHeight, int originalBitrate) {
 
         int compressionsCount = getCompressionsCount(originalWidth, originalHeight);
-//        if (compressionsCount <= 0) {
-//            return;
-//        }
+        if (compressionsCount <= 0) {
+            return;
+        }
         if (selectedCompression >= compressionsCount) {
             selectedCompression = compressionsCount - 1;
         }
