@@ -11,9 +11,9 @@ android {
         versionCode 1
         versionName "1.0"
 
-        ndk {
-            moduleName "webp"
-        }
+//        ndk {
+//            moduleName "webp"
+//        }
     }
 
     buildTypes {
