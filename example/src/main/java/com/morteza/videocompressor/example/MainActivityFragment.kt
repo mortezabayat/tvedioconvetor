@@ -144,10 +144,12 @@ class MainActivityFragment : Fragment(), SeekBar.OnSeekBarChangeListener {
                             //                                    MediaController.getInstance().processVideo(tempFile.getAbsolutePath());
                             //                                }
                             //                            }).start();
-                            val (width, higth) = getWidthAndHeight(tempFile.path)
-                            val compressionsCount = MediaController.getCompressionsCount(width, higth)
-                            seekBar.progress = 0
+                            val (width, height) = getWidthAndHeight(tempFile.path)
+                            val compressionsCount = MediaController.getCompressionsCount(width, height)
+
                             seekBar.max = compressionsCount - 1
+                            seekBar.progress = seekBar.max
+
                             editText.setText(tempFile.path)
 
                             btnCompressVideo.isEnabled = true
@@ -163,12 +165,12 @@ class MainActivityFragment : Fragment(), SeekBar.OnSeekBarChangeListener {
         }
     }
 
-    fun compress(selectedCompression: Int, checked: Boolean) {
+    private fun compress(selectedCompression: Int, checked: Boolean) {
         //MediaController.getInstance().scheduleVideoConvert(tempFile.getPath());
         VideoCompressor(selectedCompression, checked).execute()
     }
 
-    fun createConvertVideoFolder() {
+    private fun createConvertVideoFolder() {
 //        var f = File(Environment.getExternalStorageDirectory(),
 //                File.separator + Config.VIDEO_COMPRESSOR_APPLICATION_DIR_NAME)
 //        f.mkdirs()
@@ -211,7 +213,7 @@ class MainActivityFragment : Fragment(), SeekBar.OnSeekBarChangeListener {
             Log.d(TAG, "Start video compression")
         }
 
-        override fun doInBackground(vararg voids: Void): Boolean? {
+        override fun doInBackground(vararg voids: Void): Boolean {
             val random = Random()
             val destFile = File(Environment.getExternalStorageDirectory(),
                     File.separator + Config.VIDEO_COMPRESSOR_APPLICATION_DIR_NAME
@@ -222,10 +224,10 @@ class MainActivityFragment : Fragment(), SeekBar.OnSeekBarChangeListener {
             return MediaController.getInstance().convertVideo(videoInfo)
         }
 
-        override fun onPostExecute(compressed: Boolean?) {
+        override fun onPostExecute(compressed: Boolean) {
             super.onPostExecute(compressed)
             progressBar.visibility = View.GONE
-            if (compressed!!) {
+            if (compressed) {
                 btnCompressVideo.isEnabled = true
                 textView.text = "Compression successfully!"
                 Log.d(TAG, "Compression successfully!")

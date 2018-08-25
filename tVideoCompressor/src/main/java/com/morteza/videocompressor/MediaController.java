@@ -15,8 +15,10 @@ import java.io.File;
 import java.io.FileDescriptor;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.channels.FileChannel;
 
 @SuppressLint("NewApi")
 public class MediaController {
@@ -227,7 +229,7 @@ public class MediaController {
         if (compressionsCount <= 0) {
             return;
         }
-        if (selectedCompression >= compressionsCount) {
+        if (selectedCompression >= compressionsCount - 1) {
             selectedCompression = compressionsCount - 1;
         }
         if (selectedCompression != compressionsCount - 1) {
@@ -311,6 +313,10 @@ public class MediaController {
 
         processVideo(videoInfo.sourcePath, videoInfo.selectedCompression);
 
+        if (resultWidth == originalWidth && resultHeight == originalHeight && originalBitrate == bitrate) {
+            copyFile(videoInfo.sourcePath, videoInfo.destPath);
+            return true;
+        }
         long startTime = -1;
         long endTime = -1;
 
@@ -763,4 +769,35 @@ public class MediaController {
         }
         return compressionsCount;
     }
+
+
+    public static boolean copyFile(String srcPath, String dstPath) {
+        FileChannel inChannel = null;
+        FileChannel outChannel = null;
+        try {
+            inChannel = new FileInputStream(new File(srcPath)).getChannel();
+            File file = new File(dstPath);
+            if (!file.exists())
+                file.createNewFile();
+            outChannel = new FileOutputStream(new File(dstPath)).getChannel();
+            inChannel.transferTo(0, inChannel.size(), outChannel);
+
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+
+                if (inChannel != null)
+                    inChannel.close();
+                if (outChannel != null)
+                    outChannel.close();
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
 }
