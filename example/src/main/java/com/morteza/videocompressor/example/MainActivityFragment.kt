@@ -21,6 +21,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import com.morteza.videocompressor.Config
 import com.morteza.videocompressor.MediaController
 import com.morteza.videocompressor.VideoInfo
@@ -35,7 +36,20 @@ import java.util.*
 /**
  * A placeholder fragment containing a simple view.
  */
-class MainActivityFragment : Fragment() {
+class MainActivityFragment : Fragment() , SeekBar.OnSeekBarChangeListener {
+
+    override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+
+        Log.e("SeekBar " , String.format("progress %d  fromUser %s " ,progress,fromUser));
+    }
+
+    override fun onStartTrackingTouch(seekBar: SeekBar?) {
+        Log.e("SeekBar " , String.format("onStartTrackingTouch"));
+    }
+
+    override fun onStopTrackingTouch(seekBar: SeekBar?) {
+        Log.e("SeekBar " , String.format("onStopTrackingTouch"));
+    }
 
 
     private val RESULT_CODE_COMPRESS_VIDEO = 3
@@ -55,6 +69,8 @@ class MainActivityFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
 
+        seekBar.setOnSeekBarChangeListener(this);
+
         btnSelectVideo.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
             //Intent(Intent.ACTION_GET_CONTENT);
@@ -65,7 +81,11 @@ class MainActivityFragment : Fragment() {
         }
 
         btnCompressVideo.setOnClickListener {
-            compress(0, muteSwitch.isChecked)
+            compress(seekBar.progress, muteSwitch.isChecked)
+
+            var chars =  textView.text;
+            textView.text = String.format("Compress Level %d \n %s" , seekBar.progress ,chars) + "\n"
+            btnCompressVideo.isEnabled = false
         }
 
     }
@@ -110,9 +130,11 @@ class MainActivityFragment : Fragment() {
                             //                            }).start();
                             val (width, higth) = getWidthAndHeight(tempFile.path)
                             val compressionsCount = MediaController.getCompressionsCount(width, higth)
-                            progressBar.progress = 0
-                            progressBar.max = compressionsCount
+                            seekBar.progress = 0
+                            seekBar.max = compressionsCount - 1;
                             editText.setText(tempFile.path)
+
+                            btnCompressVideo.isEnabled = true
 
                         }
                     } catch (e: URISyntaxException) {
@@ -188,6 +210,7 @@ class MainActivityFragment : Fragment() {
             super.onPostExecute(compressed)
             progressBar.visibility = View.GONE
             if (compressed!!) {
+                btnCompressVideo.isEnabled = true
                 textView.text = "Compression successfully!"
                 Log.d(TAG, "Compression successfully!")
             }
