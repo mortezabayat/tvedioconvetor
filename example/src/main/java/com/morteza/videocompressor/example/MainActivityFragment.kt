@@ -1,11 +1,13 @@
 package com.morteza.videocompressor.example
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.annotation.TargetApi
 import android.app.Activity
 import android.content.ContentUris
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.database.Cursor
 import android.media.MediaMetadataRetriever
 import android.net.Uri
@@ -16,6 +18,7 @@ import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.MediaStore
 import android.provider.OpenableColumns
+import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
@@ -36,19 +39,19 @@ import java.util.*
 /**
  * A placeholder fragment containing a simple view.
  */
-class MainActivityFragment : Fragment() , SeekBar.OnSeekBarChangeListener {
+class MainActivityFragment : Fragment(), SeekBar.OnSeekBarChangeListener {
 
     override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
 
-        Log.e("SeekBar " , String.format("progress %d  fromUser %s " ,progress,fromUser));
+        Log.e("SeekBar ", String.format("progress %d  fromUser %s ", progress, fromUser))
     }
 
     override fun onStartTrackingTouch(seekBar: SeekBar?) {
-        Log.e("SeekBar " , String.format("onStartTrackingTouch"));
+        Log.e("SeekBar ", String.format("onStartTrackingTouch"))
     }
 
     override fun onStopTrackingTouch(seekBar: SeekBar?) {
-        Log.e("SeekBar " , String.format("onStopTrackingTouch"));
+        Log.e("SeekBar ", String.format("onStopTrackingTouch"))
     }
 
 
@@ -69,9 +72,22 @@ class MainActivityFragment : Fragment() , SeekBar.OnSeekBarChangeListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
 
 
-        seekBar.setOnSeekBarChangeListener(this);
+        seekBar.setOnSeekBarChangeListener(this)
 
         btnSelectVideo.setOnClickListener {
+
+            if (ActivityCompat.checkSelfPermission(requireContext()
+                            , Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_DENIED) {
+
+                ActivityCompat.requestPermissions(requireActivity(),
+                        arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                        1)
+
+                return@setOnClickListener
+            }
+
+
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Video.Media.EXTERNAL_CONTENT_URI)
             //Intent(Intent.ACTION_GET_CONTENT);
             intent.type = "video/*"
@@ -83,8 +99,8 @@ class MainActivityFragment : Fragment() , SeekBar.OnSeekBarChangeListener {
         btnCompressVideo.setOnClickListener {
             compress(seekBar.progress, muteSwitch.isChecked)
 
-            var chars =  textView.text;
-            textView.text = String.format("Compress Level %d \n %s" , seekBar.progress ,chars) + "\n"
+            val chars = textView.text
+            textView.text = String.format("Compress Level %d \n %s", seekBar.progress, chars) + "\n"
             btnCompressVideo.isEnabled = false
         }
 
@@ -131,7 +147,7 @@ class MainActivityFragment : Fragment() , SeekBar.OnSeekBarChangeListener {
                             val (width, higth) = getWidthAndHeight(tempFile.path)
                             val compressionsCount = MediaController.getCompressionsCount(width, higth)
                             seekBar.progress = 0
-                            seekBar.max = compressionsCount - 1;
+                            seekBar.max = compressionsCount - 1
                             editText.setText(tempFile.path)
 
                             btnCompressVideo.isEnabled = true
