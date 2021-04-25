@@ -14,7 +14,7 @@ Video compressor derived from Telegram open source project
   Add the dependency
    ```gradle
    dependencies {
-	        implementation 'com.github.mortezabayat:tvedioconvetor:Tag'
+	        implementation 'com.github.mortezabayat:tvedioconvetor:-SNAPSHOT'
 	}
    ```
 # How to used.
